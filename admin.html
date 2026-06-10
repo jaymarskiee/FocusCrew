@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard – The Focus Crew</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Allow camera access for QR scanner -->
+  <meta http-equiv="Permissions-Policy" content="camera=*" />
+  <!-- QR Code Scanner library (html5-qrcode — more reliable than jsQR) -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+
+<!-- ======================================================
+     ADMIN LAYOUT: Sidebar + Main Content
+     ====================================================== -->
+<div class="admin-layout">
+
+  <!-- ---- SIDEBAR ---- -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      THE <span>FOCUS</span> CREW
+      <span class="admin-tag">Admin Panel</span>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Overview</div>
+      <div class="sidebar-link active" data-panel="dashboard">
+        <span class="link-icon">📊</span>
+        <span class="link-label">Dashboard</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Management</div>
+      <div class="sidebar-link" data-panel="bookings">
+        <span class="link-icon">📅</span>
+        <span class="link-label">Bookings</span>
+      </div>
+      <div class="sidebar-link" data-panel="messages">
+        <span class="link-icon">✉️</span>
+        <span class="link-label">Messages</span>
+      </div>
+      <div class="sidebar-link" data-panel="users">
+        <span class="link-icon">👥</span>
+        <span class="link-label">Users</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Tools</div>
+      <div class="sidebar-link" data-panel="qr">
+        <span class="link-icon">📷</span>
+        <span class="link-label">QR Codes</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-link" id="admin-logout">
+        <span class="link-icon">🚪</span>
+        <span class="link-label">Logout</span>
+      </div>
+    </div>
+
+    <!-- Back to site link -->
+    <div style="padding:20px; border-top:1px solid #222; margin-top:auto;">
+      <a href="index.html" style="color:#555; font-size:0.82rem; display:flex; gap:8px; align-items:center;">
+        ← Back to Website
+      </a>
+    </div>
+  </aside>
+
+  <!-- ---- MAIN CONTENT ---- -->
+  <main class="admin-main">
+
+    <!-- Sticky Top Bar -->
+    <header class="admin-header">
+      <h1 id="admin-page-title">Dashboard</h1>
+      <div class="admin-user-badge">
+        <div class="admin-avatar">A</div>
+        <span id="admin-user-name">Admin</span>
+      </div>
+    </header>
+
+    <div class="admin-content">
+
+      <!-- ==================================================
+           PANEL 1: DASHBOARD
+           ================================================== -->
+      <div id="panel-dashboard" class="admin-panel active">
+
+        <!-- Stats Row -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-icon">📅</div>
+            <div class="stat-card-value" id="stat-bookings">0</div>
+            <div class="stat-card-label">Total Bookings</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">⏳</div>
+            <div class="stat-card-value" id="stat-pending">0</div>
+            <div class="stat-card-label">Pending</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">✉️</div>
+            <div class="stat-card-value" id="stat-messages">0</div>
+            <div class="stat-card-label">Unread Messages</div>
+          </div>
+          </div>
+
+        <!-- Recent Bookings -->
+        <div class="admin-table-section">
+          <div class="admin-table-header">
+            <h3>Recent Bookings</h3>
+            <button class="btn btn-primary btn-sm"
+                    onclick="document.querySelector('[data-panel=bookings]').click()">
+              View All
+            </button>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Client</th>
+                <th>Service</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-bookings-tbody">
+              <tr>
+                <td colspan="7" style="text-align:center; padding:32px; color:#aaa;">
+                  No bookings yet. <a href="index.html#booking" style="color:var(--yellow);">Create test booking →</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <!-- END Dashboard -->
+
+      <!-- ==================================================
+           PANEL 2: BOOKINGS (full table with search/filter)
+           ================================================== -->
+      <div id="panel-bookings" class="admin-panel">
+
+        <div class="admin-table-section">
+          <div class="admin-table-header">
+            <h3>All Bookings</h3>
+          </div>
+
+          <!-- Search & Filter Controls -->
+          <div style="padding:16px 24px; border-bottom:1px solid #eee;">
+            <div class="admin-search">
+              <input type="text" id="booking-search" placeholder="🔍 Search by name, service, ID..." />
+              <select id="booking-filter-status">
+                <option value="all">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="done">Done</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Client Name</th>
+                <th>Service</th>
+                <th>Shoot Date</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bookings-tbody">
+              <!-- Rendered by admin.js -->
+            </tbody>
+          </table>
+
+          <div id="bookings-pagination" class="pagination"></div>
+        </div>
+
+      </div>
+      <!-- END Bookings -->
+
+      <!-- ==================================================
+           PANEL 3: MESSAGES
+           ================================================== -->
+      <div id="panel-messages" class="admin-panel">
+
+        <div class="admin-table-section">
+          <div class="admin-table-header">
+            <h3>Contact Messages</h3>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Service Interest</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="messages-tbody">
+              <!-- Rendered by admin.js -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <!-- END Messages -->
+
+      <!-- ==================================================
+           PANEL 4: USERS
+           ================================================== -->
+      <div id="panel-users" class="admin-panel">
+
+        <div class="admin-table-section">
+          <div class="admin-table-header">
+            <h3>Registered Users</h3>
+          </div>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Verified</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody">
+              <!-- Rendered by admin.js -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <!-- END Users -->
+
+      <!-- ==================================================
+           PANEL 6: QR CODE SCANNER & BOOKING LOOKUP
+           ================================================== -->
+      <div id="panel-qr" class="admin-panel">
+
+        <div style="display:flex; flex-direction:column; gap:24px;">
+
+          <!-- Scanner + Manual Lookup Card -->
+          <div class="qr-card" style="max-width:100%;">
+            <h3>📷 Scan or Enter Booking QR Code</h3>
+            <p style="color:#888; font-size:0.9rem; margin-bottom:20px;">
+              Scan a booking QR code using your camera, or manually type the Booking ID below to view the full receipt.
+            </p>
+
+            <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start;">
+
+              <!-- Camera Scanner -->
+              <div style="flex:1; min-width:260px;">
+                <div class="qr-scan-area">
+                  <div id="qr-video" style="width:100%;border-radius:8px;overflow:hidden;"></div>
+                </div>
+                <div id="qr-scan-result" style="margin-top:10px; color:#888; font-size:0.85rem;">
+                  Press "Start Scanning" to activate camera.
+                </div>
+                <div style="display:flex; gap:10px; margin-top:12px;">
+                  <button id="qr-scan-start" class="btn btn-primary">&#9654; Start Scanning</button>
+                  <button id="qr-scan-stop"  class="btn btn-dark" disabled>&#9632; Stop</button>
+                </div>
+              </div>
+
+              <!-- Manual Booking Code Entry -->
+              <div style="flex:1; min-width:240px;">
+                <label style="font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:8px; color:#ccc;">
+                  Enter Booking ID / Code
+                </label>
+                <input type="text" id="qr-booking-input" class="form-control"
+                       placeholder="e.g. BK250415123"
+                       style="margin-bottom:10px;" />
+                <button id="qr-lookup-btn" class="btn btn-primary" style="width:100%;">
+                  🔍 Show Receipt
+                </button>
+                <p style="color:#555; font-size:0.78rem; margin-top:10px; line-height:1.5;">
+                  Type any Booking ID and click "Show Receipt" — or just scan the QR code from any booking confirmation and the receipt will automatically appear below.
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Receipt Display Area (shown after scan or lookup) -->
+          <div id="qr-receipt-area" style="display:none;">
+            <div id="qr-receipt-content"></div>
+          </div>
+
+        </div>
+
+      </div>
+      <!-- END QR Codes -->
+
+    </div>
+    <!-- END admin-content -->
+  </main>
+</div>
+
+<!-- Load main.js first (has DB, Auth, Toast, Validator), then admin.js -->
+<script src="js/main.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

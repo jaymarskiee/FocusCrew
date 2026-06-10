@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login – The Focus Crew</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div class="login-page">
+
+  <!-- LEFT: Brand Visual -->
+  <div class="login-visual">
+    <div class="login-visual-bg"></div>
+    <div class="login-visual-glow"></div>
+    <div class="login-visual-content">
+      <div class="big-logo">THE<span>FOCUS<br>CREW</span></div>
+      <p>Professional photography services in Bohol. Capturing your most precious moments.</p>
+      <div class="login-tagline">
+        <div class="login-tagline-item">
+          <div class="login-tagline-num">500+</div>
+          <div class="login-tagline-txt">Shoots Done</div>
+        </div>
+        <div class="login-tagline-item">
+          <div class="login-tagline-num">7</div>
+          <div class="login-tagline-txt">Service Types</div>
+        </div>
+        <div class="login-tagline-item">
+          <div class="login-tagline-num">100%</div>
+          <div class="login-tagline-txt">Happy Clients</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Login / Register Forms -->
+  <div class="login-form-side">
+    <div class="login-form-box">
+
+      <!-- Tab Switcher -->
+      <div style="display:flex;gap:0;margin-bottom:32px;border:2px solid #eee;border-radius:8px;overflow:hidden;">
+        <button id="tab-login" onclick="showTab('login')"
+          style="flex:1;padding:12px;font-weight:700;font-size:0.9rem;letter-spacing:0.5px;text-transform:uppercase;background:#1a1a1a;color:#fff;cursor:pointer;border:none;">
+          Login
+        </button>
+        <button id="tab-register" onclick="showTab('register')"
+          style="flex:1;padding:12px;font-weight:700;font-size:0.9rem;letter-spacing:0.5px;text-transform:uppercase;background:#fff;color:#888;cursor:pointer;border:none;">
+          Register
+        </button>
+      </div>
+
+      <!-- Alert (success messages) -->
+      <div id="auth-success" class="alert alert-success hidden" style="background:#1a3a2a;border:1px solid #2ecc71;color:#2ecc71;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:.875rem;"></div>
+
+      <!-- Alert (error messages) -->
+      <div id="auth-alert" class="alert alert-error hidden"></div>
+
+      <!-- LOGIN FORM -->
+      <div id="login-section">
+        <h2>WELCOME <span>BACK</span></h2>
+        <p class="subtitle">Sign in to manage bookings and more.</p>
+
+        <form id="login-form" novalidate>
+          <div class="input-group">
+            <label for="login-email">Email Address</label>
+            <span class="input-icon">✉</span>
+            <input type="email" id="login-email" placeholder="you@email.com" autocomplete="email" />
+          </div>
+          <div class="input-group">
+            <label for="login-password">Password</label>
+            <span class="input-icon">🔒</span>
+            <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+          <div class="login-options">
+            <label><input type="checkbox" id="remember-me" /> Remember me</label>
+            <a href="#" onclick="openForgotModal(event)">Forgot Password?</a>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
+            Sign In
+          </button>
+        </form>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="register-section" class="hidden">
+        <h2>CREATE <span>ACCOUNT</span></h2>
+        <p class="subtitle">Join us to book photography sessions.</p>
+
+        <form id="register-form" novalidate>
+          <div class="input-group">
+            <label for="reg-name">Full Name</label>
+            <span class="input-icon">👤</span>
+            <input type="text" id="reg-name" placeholder="Juan Dela Cruz" />
+          </div>
+          <div class="input-group">
+            <label for="reg-email">Email Address</label>
+            <span class="input-icon">✉</span>
+            <input type="email" id="reg-email" placeholder="you@email.com" />
+          </div>
+          <div class="input-group">
+            <label for="reg-password">Password</label>
+            <span class="input-icon">🔒</span>
+            <input type="password" id="reg-password" placeholder="Min. 6 characters" />
+            <button type="button" class="eye-btn" onclick="toggleEye('reg-password', this)" title="Show/hide">👁</button>
+          </div>
+          <div class="input-group">
+            <label for="reg-confirm">Confirm Password</label>
+            <span class="input-icon">🔒</span>
+            <input type="password" id="reg-confirm" placeholder="Repeat password" />
+            <button type="button" class="eye-btn" onclick="toggleEye('reg-confirm', this)" title="Show/hide">👁</button>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
+            Create Account
+          </button>
+        </form>
+      </div>
+
+      <!-- RESEND VERIFICATION (shown after unverified login attempt) -->
+      <div id="resend-section" class="hidden" style="margin-top:16px;padding:16px;background:#1a1a2e;border:1px solid #3a3a5e;border-radius:8px;font-size:.85rem;color:#aaa;text-align:center;">
+        <p style="margin-bottom:12px;">Didn't receive the email or link expired?</p>
+        <button id="resend-btn" onclick="resendVerification()"
+          style="padding:10px 22px;background:#1a1a1a;border:2px solid #c9a84c;color:#c9a84c;border-radius:6px;font-weight:700;font-size:.82rem;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;">
+          Resend Verification Email
+        </button>
+      </div>
+
+      <!-- Back to site -->
+      <div style="text-align:center;margin-top:24px;">
+        <a href="index.html" style="color:#aaa;font-size:0.85rem;">← Back to Website</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script>
+
+  /* ---- Auto-open register tab if redirected from booking ---- */
+  (function () {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('tab') === 'register') {
+      showTab('register');
+
+      // Optional: show a friendly message
+      const alert = document.getElementById('auth-alert');
+      if (alert) {
+        alert.textContent = '📝 Please create a free account to book a session.';
+        alert.classList.remove('hidden');
+        alert.style.background = '#1a3a1a';
+        alert.style.color = '#7ddd7d';
+        alert.style.borderColor = '#2a6a2a';
+      }
+    }
+  })();
+
+
+  function showTab(tab) {
+    const loginSec = document.getElementById('login-section');
+    const regSec   = document.getElementById('register-section');
+    const tabLogin = document.getElementById('tab-login');
+    const tabReg   = document.getElementById('tab-register');
+    const alertEl  = document.getElementById('auth-alert');
+
+    alertEl.classList.add('hidden');
+    alertEl.textContent = '';
+
+    if (tab === 'login') {
+      loginSec.classList.remove('hidden');
+      regSec.classList.add('hidden');
+      tabLogin.style.background = '#1a1a1a'; tabLogin.style.color = '#fff';
+      tabReg.style.background   = '#fff';    tabReg.style.color   = '#888';
+    } else {
+      loginSec.classList.add('hidden');
+      regSec.classList.remove('hidden');
+      tabReg.style.background   = '#1a1a1a'; tabReg.style.color   = '#fff';
+      tabLogin.style.background = '#fff';    tabLogin.style.color = '#888';
+    }
+  }
+
+  /* ---- Show error banner ---- */
+  function showAuthError(msg) {
+    const el = document.getElementById('auth-alert');
+    el.textContent = '⚠ ' + msg;
+    el.classList.remove('hidden');
+  }
+
+  /* ---- LOGIN ---- */
+  document.getElementById('login-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const email    = document.getElementById('login-email');
+    const password = document.getElementById('login-password');
+
+    const valid = Validator.validateForm([
+      { input: email,    rules: [Validator.rules.required, Validator.rules.email] },
+      { input: password, rules: [Validator.rules.required] },
+    ]);
+    if (!valid) return;
+
+    const btn = this.querySelector('button[type=submit]');
+    btn.disabled  = true;
+    btn.innerHTML = '<span class="spinner"></span> Signing in...';
+
+    const result = await Auth.login(email.value.trim(), password.value);
+
+    if (!result.success) {
+      showAuthError(result.error);
+      btn.disabled    = false;
+      btn.textContent = 'Sign In';
+      // Show resend section if email is unverified
+      if (result.unverified) {
+        window._unverifiedEmail = result.email;
+        document.getElementById('resend-section').classList.remove('hidden');
+      }
+      return;
+    }
+
+    // Redirect based on role
+    window.location.href = result.user.role === 'admin' ? 'admin.html' : 'index.html';
+  });
+
+  /* ---- REGISTER ---- */
+  document.getElementById('register-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const name     = document.getElementById('reg-name');
+    const email    = document.getElementById('reg-email');
+    const password = document.getElementById('reg-password');
+    const confirm  = document.getElementById('reg-confirm');
+
+    const valid = Validator.validateForm([
+      { input: name,     rules: [Validator.rules.required] },
+      { input: email,    rules: [Validator.rules.required, Validator.rules.email] },
+      { input: password, rules: [Validator.rules.required, Validator.rules.minLen(6)] },
+      { input: confirm,  rules: [Validator.rules.required] },
+    ]);
+    if (!valid) return;
+
+    if (password.value !== confirm.value) {
+      Validator.showError(confirm, 'Passwords do not match.');
+      return;
+    }
+
+    const btn = this.querySelector('button[type=submit]');
+    btn.disabled  = true;
+    btn.innerHTML = '<span class="spinner"></span> Creating account...';
+
+    const result = await Auth.register(name.value.trim(), email.value.trim(), password.value);
+
+    if (!result.success) {
+      showAuthError(result.error);
+      btn.disabled    = false;
+      btn.textContent = 'Create Account';
+      return;
+    }
+
+    // Show "check your email" message instead of redirecting
+    btn.disabled    = false;
+    btn.textContent = 'Create Account';
+    document.getElementById('auth-success').textContent = '✅ ' + (result.message || 'Account created! Please check your email to verify your account before logging in.');
+    document.getElementById('auth-success').classList.remove('hidden');
+    document.getElementById('auth-alert').classList.add('hidden');
+    // Switch to login tab after 3 seconds
+    setTimeout(() => showTab('login'), 3000);
+  });
+
+  /* ---- Resend Verification Email ---- */
+  async function resendVerification() {
+    const email = window._unverifiedEmail || document.getElementById('login-email').value.trim();
+    if (!email) { showAuthError('Please enter your email first.'); return; }
+
+    const btn = document.getElementById('resend-btn');
+    btn.disabled  = true;
+    btn.textContent = 'Sending...';
+
+    const res = await fetch('api/users.php?action=resend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+
+    btn.disabled  = false;
+    btn.textContent = 'Resend Verification Email';
+
+    if (data.success) {
+      document.getElementById('auth-success').textContent = '✅ ' + data.message;
+      document.getElementById('auth-success').classList.remove('hidden');
+      document.getElementById('auth-alert').classList.add('hidden');
+    } else {
+      showAuthError(data.error || 'Could not resend email. Please try again.');
+    }
+  }
+
+  /* ---- If already logged in, skip login page ---- */
+  document.addEventListener('DOMContentLoaded', function () {
+    if (DB.isLoggedIn()) {
+      window.location.href = DB.isAdmin() ? 'admin.html' : 'index.html';
+    }
+  });
+
+</script>
+
+<!-- ===================== FORGOT PASSWORD MODAL ===================== -->
+<div id="forgot-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#1a1a1a;border-radius:16px;padding:40px 36px;max-width:400px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.7);">
+    <h3 style="color:#fff;font-size:1.1rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin:0 0 6px;">Forgot Password?</h3>
+    <p style="color:#888;font-size:.85rem;margin:0 0 24px;line-height:1.6;">Enter your registered email and we'll send you a link to reset your password.</p>
+
+    <div id="forgot-success" style="background:#1a3a2a;border:1px solid #2ecc71;color:#2ecc71;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:.875rem;display:none;"></div>
+    <div id="forgot-error"   style="background:#3a1a1a;border:1px solid #e74c3c;color:#e74c3c;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:.875rem;display:none;"></div>
+
+    <div class="input-group" style="margin-bottom:20px;">
+      <label for="forgot-email" style="display:block;font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;color:#555;">Email Address</label>
+      <span class="input-icon">✉</span>
+      <input type="email" id="forgot-email" placeholder="you@email.com" style="width:100%;padding:14px 14px 14px 44px;border:2px solid #333;border-radius:8px;font-size:.95rem;background:#111;color:#fff;" />
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button id="forgot-submit-btn" onclick="submitForgot()" class="btn btn-primary" style="flex:1;justify-content:center;">
+        Send Reset Link
+      </button>
+      <button onclick="closeForgotModal()" style="flex:1;padding:12px;background:#1e1e1e;color:#aaa;border:1px solid #333;border-radius:8px;font-weight:700;font-size:.85rem;cursor:pointer;">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .eye-btn {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; font-size: 1.1rem;
+    color: #aaa; padding: 0; line-height: 1;
+  }
+  .eye-btn:hover { color: #F5A623; }
+</style>
+
+<script>
+  /* ---- Eye toggle ---- */
+  function toggleEye(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      btn.textContent = '👁';
+    }
+  }
+
+  /* ---- Forgot Password Modal ---- */
+  function openForgotModal(e) {
+    e.preventDefault();
+    const modal = document.getElementById('forgot-modal');
+    modal.style.display = 'flex';
+    document.getElementById('forgot-email').value = document.getElementById('login-email').value || '';
+    document.getElementById('forgot-success').style.display = 'none';
+    document.getElementById('forgot-error').style.display = 'none';
+  }
+
+  function closeForgotModal() {
+    document.getElementById('forgot-modal').style.display = 'none';
+  }
+
+  // Close modal when clicking outside
+  document.getElementById('forgot-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeForgotModal();
+  });
+
+  async function submitForgot() {
+    const email  = document.getElementById('forgot-email').value.trim();
+    const errEl  = document.getElementById('forgot-error');
+    const sucEl  = document.getElementById('forgot-success');
+    const btn    = document.getElementById('forgot-submit-btn');
+
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+
+    if (!email) {
+      errEl.textContent = '⚠ Please enter your email address.';
+      errEl.style.display = 'block'; return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Sending...';
+
+    const res  = await fetch('api/users.php?action=forgot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+
+    btn.disabled = false;
+    btn.textContent = 'Send Reset Link';
+
+    if (data.success) {
+      sucEl.textContent = '✅ ' + data.message;
+      sucEl.style.display = 'block';
+      document.getElementById('forgot-email').value = '';
+    } else {
+      errEl.textContent = '❌ ' + (data.error || 'Something went wrong.');
+      errEl.style.display = 'block';
+    }
+  }
+</script>
+
+</body>
+</html>
